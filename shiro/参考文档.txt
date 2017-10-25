@@ -1,0 +1,23 @@
+
+Shiro+Cas微服务化及前后端完全分离-客如云
+http://m.blog.csdn.net/crowhyc/article/details/74914810
+
+
+vue2 前后端分离项目ajax跨域session问题解决
+http://blog.csdn.net/sky786905664/article/details/73920815
+
+
+前后端分离的项目，如何解决登录问题？
+https://segmentfault.com/q/1010000005795784
+
+
+在前后端分离的项目中，后台使用shiro框架时，怎样使用它的会话管理系统(session)，从而实现权限控制
+http://blog.csdn.net/palerock/article/details/73457415
+
+
+在前后端分离的项目中，ajax跨域请求怎样附带cookie
+http://blog.csdn.net/palerock/article/details/73456992
+
+
+基于 RESTful 风格的 API 前后端分离的项目如何做权限控制
+http://blog.csdn.net/palerock/article/details/73456992
