@@ -21,3 +21,9 @@ http://blog.csdn.net/palerock/article/details/73456992
 
 基于 RESTful 风格的 API 前后端分离的项目如何做权限控制
 http://blog.csdn.net/palerock/article/details/73456992
+
+windows32位下安装Redis
+http://blog.csdn.net/pt1742395895/article/details/55211457
+
+redis-server.exe Redis.conf
+
