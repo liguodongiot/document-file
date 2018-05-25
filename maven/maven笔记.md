@@ -63,6 +63,28 @@ java projeck --jar包
 
 
 
+install : 安装到本地仓库
+
+
+
+### 生命周期
+
+maven有三套生命周期，每一套生命周期相互独立,互不影响。在同一套生命周期，执行后面的命令，前面操作会自动执行。
+
+CleanLifeCycle: 清理生命周期
+
+clean
+
+DefaultLifeCycle: 默认生命周期
+
+compile --> test  --> package  --> install --> deploy
+
+SiteLifeCycle: 站点生命周期
+
+site
+
+
+
 
 
 
@@ -108,7 +130,14 @@ java projeck --jar包
 
 
 
+### 概念模型
+
+两个核心
+
+依赖管理：对jar包管理
+
+项目构建：通过命令进行项目构建
 
 
 
-
+![概念模型](E:\sourceCode\document-file\maven\pic\概念模型.png)
