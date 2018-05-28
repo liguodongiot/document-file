@@ -1,0 +1,34 @@
+
+
+
+create database ai_data;
+
+show databases;
+
+use ai_data;
+
+show tables;
+
+
+
+hdfs dfs -put data.txt /user/finance 
+hdfs dfs -chmod 777 /user/finance/data.txt
+hdfs dfs -ls /user/finance
+
+
+
+create table if not exists testtable(
+	name string,
+	addr string
+)
+row format delimited fields terminated by '\t' 
+lines terminated by '\n' stored as textfile;
+
+load data inpath '/user/finance/data.txt' overwrite into table testtable;
+
+
+
+
+
+
+
