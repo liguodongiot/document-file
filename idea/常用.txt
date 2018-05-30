@@ -1,0 +1,12 @@
+×¢ÊÍ
+
+/**
+ * <p>Project: ${PROJECT_NAME}</p>
+ * <p>Package: ${PACKAGE_NAME}</p>
+ * <p>Title: </p>
+ * <p>Description: </p>
+ *
+ * @author ${USER}
+ * @version 1.0.0
+ * @date ${DATE}
+ */
