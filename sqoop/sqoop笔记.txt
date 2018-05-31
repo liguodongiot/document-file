@@ -5,7 +5,7 @@ mysql导入hdfs(hive)
 # list-databases 查看mysql数据库
 
 sqoop list-databases \
---connect jdbc:mysql://10.250.140.89:3306  \
+--connect jdbc:mysql://10.555.140.89:3306  \
 --username root \
 --password datacenter 
 
@@ -13,7 +13,7 @@ sqoop list-databases \
 
 # list-tables 查看库里的表
 sqoop list-tables \
---connect jdbc:mysql://10.250.140.89:3306/demo \
+--connect jdbc:mysql://10.555.140.89:3306/demo \
 --username root \
 --password datacenter 
 
@@ -23,7 +23,7 @@ sqoop list-tables \
 -m 1: 指定启动一个map进程，如果表很大，可以启动多个map进程，默认是4个
 默认导入当前用户目录下/user/用户名/表名
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table chat_session_stat -m 1
@@ -31,7 +31,7 @@ sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
 
 
 # 没有主键的表
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test
@@ -59,7 +59,7 @@ Please specify one with --split-by or perform a sequential import with '-m 1'.
 5、split-by即便是int型，若不是连续有规律递增的话，各个map分配的数据是不均衡的，
 可能会有些map很忙，有些map几乎没有数据处理的情况。
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test \
@@ -74,7 +74,7 @@ sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
 --mapreduce-job-name
 
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test \
@@ -87,7 +87,7 @@ sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
 导入到指定目录
 参数：--target-dir /directory
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test \
@@ -104,7 +104,7 @@ sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
 参数: --fields-terminated-by
 
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test \
@@ -119,7 +119,7 @@ sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
 指定行之间的分隔符 
 参数: --lines-terminated-by
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test \
@@ -139,7 +139,7 @@ sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
 2. –null-non-string 含义是 非string类型的字段，当Value是NULL，替换成指定字符先
 
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test \
@@ -156,7 +156,7 @@ sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
 导入表中的部分字段,中间用逗号分隔
 参数: --columns
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test \
@@ -172,7 +172,7 @@ sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
 按条件导入数据 
 参数：--where
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test \
@@ -198,7 +198,7 @@ $CONDITIONS是一个变量，用于给多个map任务划分任务范围。
 
 
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --target-dir /user/finance/input/ \
@@ -217,7 +217,7 @@ vi sqoop-import-hdfs.txt
                                    
 import 
 --connect 
-jdbc:mysql://10.250.140.89:3306/bot_chat 
+jdbc:mysql://10.555.140.89:3306/chat_stat 
 --username 
 root 
 --password 
@@ -238,7 +238,7 @@ sqoop --option-file /root/sqoop-import-hdfs.txt
 eval
 执行一个SQL语句并查询出结果。
 
-sqoop eval --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop eval --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --query "select name,list_name,index_value from test where index_value>1"
@@ -265,7 +265,7 @@ hive
 --hive-partition-value <partition-value>    : 设置分区value（分区值）
 
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test \
@@ -285,7 +285,7 @@ sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
 
 导入hive表指定分区
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test \
@@ -306,7 +306,7 @@ sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
 
 
 
-sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test \
@@ -350,7 +350,7 @@ CREATE TABLE `test_hdfs` (
 
 
 sqoop export \
---connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test_hdfs \
@@ -374,7 +374,7 @@ sqoop export
 --columns <col,col,col...>
 
 sqoop export \
---connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --username root \
 --password datacenter \
 --table test_hdfs \
