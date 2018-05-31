@@ -1,0 +1,397 @@
+
+--------------------
+mysql导入hdfs(hive)
+
+# list-databases 查看mysql数据库
+
+sqoop list-databases \
+--connect jdbc:mysql://10.250.140.89:3306  \
+--username root \
+--password datacenter 
+
+
+
+# list-tables 查看库里的表
+sqoop list-tables \
+--connect jdbc:mysql://10.250.140.89:3306/demo \
+--username root \
+--password datacenter 
+
+
+# import 讲mysql导入hdfs(hive)
+-–table example: mysql中即将导出的表为example
+-m 1: 指定启动一个map进程，如果表很大，可以启动多个map进程，默认是4个
+默认导入当前用户目录下/user/用户名/表名
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table chat_session_stat -m 1
+
+
+
+# 没有主键的表
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test
+
+异常：
+Error during import: No primary key could be found for table test. 
+Please specify one with --split-by or perform a sequential import with '-m 1'.
+
+
+1、Sqoop可以通过–split-by指定切分的字段，–m设置mapper的数量。
+通过这两个参数分解生成m个where子句，进行分段查询。
+
+2、split-by 根据不同的参数类型有不同的切分方法，
+如表共有100条数据其中id为int类型，并且我们指定–split-by id，
+我们不设置map数量使用默认的为四个，首先Sqoop会取获取切分字段的MIN()和MAX()
+即（–split -by），再根据map数量进行划分，
+这是字段值就会分为四个map：（1-25）（26-50）（51-75）（75-100）。
+
+3、根据MIN和MAX不同的类型采用不同的切分方式支持
+有Date,Text,Float,Integer,Boolean,NText,BigDecimal等等。
+
+4、若导入的表中没有主键，将-m设置为1，即只有一个map运行，
+缺点是不能并行map录入数据。（注意，当-m 设置的值大于1时，split-by必须设置字段） 。
+
+5、split-by即便是int型，若不是连续有规律递增的话，各个map分配的数据是不均衡的，
+可能会有些map很忙，有些map几乎没有数据处理的情况。
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test \
+--split-by name
+
+
+
+删除目标目录后在导入,并且指定mapreduce的job的名字 
+
+参数：
+--delete-target-dir 
+--mapreduce-job-name
+
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test \
+--mapreduce-job-name ImportMySQL2HDFS \
+--delete-target-dir \
+--table test \
+-m 1
+
+
+导入到指定目录
+参数：--target-dir /directory
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test \
+--mapreduce-job-name ImportMySQL2HDFS \
+--delete-target-dir \
+--table test \
+-m 1 \
+--target-dir /user/finance/input/
+
+
+
+
+指定字段之间的分隔符 
+参数: --fields-terminated-by
+
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test \
+--mapreduce-job-name ImportMySQL2HDFS \
+--delete-target-dir \
+--table test \
+--fields-terminated-by '\t' \
+-m 1
+
+
+
+指定行之间的分隔符 
+参数: --lines-terminated-by
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test \
+--mapreduce-job-name ImportMySQL2HDFS \
+--delete-target-dir \
+--table test \
+--fields-terminated-by '\t' \
+--lines-terminated-by "\n" \
+-m 1
+
+
+
+
+如果为NULL，替换成指定字符
+参数: 
+1. –null-string 含义是 string类型的字段，当Value是NULL，替换成指定的字符 
+2. –null-non-string 含义是 非string类型的字段，当Value是NULL，替换成指定字符先
+
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test \
+--mapreduce-job-name ImportMySQL2HDFS \
+--delete-target-dir \
+--table test \
+--fields-terminated-by '\t' \
+-m 1 \
+--null-non-string 0
+
+
+
+
+导入表中的部分字段,中间用逗号分隔
+参数: --columns
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test \
+--mapreduce-job-name ImportMySQL2HDFS \
+--delete-target-dir \
+--table test \
+--fields-terminated-by '\t' \
+-m 1 \
+--null-non-string 0  \
+--columns "list_name,index_value" 
+
+
+按条件导入数据 
+参数：--where
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test \
+--mapreduce-job-name ImportMySQL2HDFS \
+--delete-target-dir \
+--table test \
+--fields-terminated-by '\t' \
+-m 1 \
+--null-non-string 0  \
+--columns "list_name,index_value" \
+--where 'index_value<3'
+
+
+
+
+按照sql语句进行导入 
+参数: --query 
+注：使用--query关键字，就不能使用--table和--columns, 并且要指定--target-dir。
+
+
+自定义sql语句的where条件中必须包含字符串 $CONDITIONS，
+$CONDITIONS是一个变量，用于给多个map任务划分任务范围。
+
+
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--target-dir /user/finance/input/ \
+--delete-target-dir \
+--fields-terminated-by '\t' \
+-m 1 \
+--null-non-string 0  \
+--query "select name,list_name,index_value from test where index_value>1 and \$CONDITIONS"
+
+
+
+在文件中执行
+创建文件sqoop-import-hdfs.txt
+vi sqoop-import-hdfs.txt
+
+                                   
+import 
+--connect 
+jdbc:mysql://10.250.140.89:3306/bot_chat 
+--username 
+root 
+--password 
+datacenter 
+--target-dir 
+/user/finance/input/ 
+--table 
+test
+--delete-target-dir 
+--fields-terminated-by 
+'\t'
+-m 
+1 
+
+sqoop --option-file /root/sqoop-import-hdfs.txt
+
+
+eval
+执行一个SQL语句并查询出结果。
+
+sqoop eval --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--query "select name,list_name,index_value from test where index_value>1"
+
+
+--------------------
+hive
+
+
+–create-hive-table ：创建目标表，如果有会报错； 
+–hive-database ： 指定hive数据库； 
+–hive-import ： 指定导入hive（没有这个条件导入到hdfs中）； 
+–hive-overwrite ：覆盖； 
+–hive-table stu_import ： 指定hive中表的名字，如果不指定使用导入的表的表名；
+
+
+导入Hive不建议大家使用–create-hive-table,建议事先创建好hive表 
+使用create创建表后，我们可以查看字段对应的类型，发现有些并不是我们想要的类型，
+所以我们要事先创建好表的结构再导入数据。
+
+
+导入到hive指定分区
+--hive-partition-key <partition-key>    : 设置分区key（分区字段）
+--hive-partition-value <partition-value>    : 设置分区value（分区值）
+
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test \
+--mapreduce-job-name ImportMySQL2HIVE \
+--delete-target-dir \
+--table test \
+--fields-terminated-by '\t' \
+-m 1 \
+--null-non-string 0  \
+--columns "list_name,index_value" \
+--create-hive-table \
+--hive-database ai_data \
+--hive-import \
+--hive-overwrite \
+--hive-table test_hive
+
+
+导入hive表指定分区
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test \
+--mapreduce-job-name ImportMySQL2HIVE \
+--delete-target-dir \
+--table test \
+--fields-terminated-by '\t' \
+-m 1 \
+--null-non-string 0  \
+--columns "list_name,index_value" \
+--create-hive-table \
+--hive-database ai_data \
+--hive-import \
+--hive-overwrite \
+--hive-table test_hive_part \
+--hive-partition-key dt \
+--hive-partition-value "2018-08-08"
+
+
+
+sqoop import  --connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test \
+--mapreduce-job-name ImportMySQL2HIVE \
+--delete-target-dir \
+--table test \
+--fields-terminated-by '\t' \
+-m 1 \
+--null-non-string 0  \
+--columns "list_name,index_value" \
+--hive-database ai_data \
+--hive-import \
+--hive-overwrite \
+--hive-table test_hive_part \
+--hive-partition-key dt \
+--hive-partition-value "2018-08-09"
+
+
+
+-------------------------
+HDFS（Hive）数据导出到MySQL
+
+HDFS:
+hdfs dfs -cat /user/hive/warehouse/ai_data.db/test_hive/part-m-00000
+["aaa","bbb","cccc"]	0
+["aaa","bbb","cccc"]	2
+["aaa","bbb","cccc"]	0
+
+mysql,执行导出语句前先创建sal_demo表（不创建表会报错）:
+create table test_hdfs like test;
+
+CREATE TABLE `test_hdfs` (
+  `list_name` varchar(255) DEFAULT NULL,
+  `index_value` int(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+–table sal_demo ：指定导出表的名称；
+–input-fields-terminated-by：可以用来指定hdfs上文件的分隔符，默认是逗号（查询数据室可以看出我是用的是\t，所以这里指定为\t ，这里大家小心可能因为分隔符的原因报错）
+–export-dir ：导出数据的目录。
+
+
+sqoop export \
+--connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test_hdfs \
+--input-fields-terminated-by '\t' \
+--export-dir /user/hive/warehouse/ai_data.db/test_hive \
+-m 1 
+
+
+
+插入中文乱码问题
+sqoop export 
+--connect "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf-8" 
+--username root 
+--password 123456 
+--table sal 
+-m 1 
+--export-dir /user/hadoop/sal/
+
+
+指定导出的字段 
+--columns <col,col,col...>
+
+sqoop export \
+--connect jdbc:mysql://10.250.140.89:3306/bot_chat \
+--username root \
+--password datacenter \
+--table test_hdfs \
+--input-fields-terminated-by '\t' \
+--export-dir /user/hive/warehouse/ai_data.db/test_hive \
+--columns list_name
+
+
+
+
+根目录 类似于linux的/
+hdfs dfs -ls /
+
+# 当前用户根目录 类似于linux的~(/home/user)
+hdfs dfs -ls 
+
+
+
+
+
