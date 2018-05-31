@@ -1,0 +1,34 @@
+
+
+https://www.zybuluo.com/xtccc/note/177146
+
+为每一个User Account创建Kerberos Principal
+当集群运行Kerberos后，每一个Hadoop user都必须有一个principal或者keytab来获取Kerberos credentials，
+这样才能访问集群并使用Hadoop的服务。也就是说，如果Hadoop集群存在一个名为tom@GUIZHOU.COM的principal，
+那么在集群的每一个节点上应该存在一个名为tom的Linux用户。
+同时，在HDFS中的目录/user要存在相应的用户目录（即/user/tom），且该目录的owner和group都要是tom。
+
+
+
+
+Requested user hdfs is not whitelisted and has id 496,which is below the minimum allowed 1000
+
+hdfs用户无法提交一个Job
+『user id』的值不够大
+Linux user 的 user id 要大于等于1000，否则会无法提交Job。
+
+解决方法： 
+1. 修改一个用户的user id? (不推荐采取这种解决方式，否则hdfs用户的非家目录中的文件的owner都要手动去一一修改。 )
+    用命令 usermod -u <new-user-id> <user> 
+
+usermod -u 1001 hdfs
+
+2. 修改Clouder关于这个该项的设置 
+在 Cloudera中修改配置项 
+YARN -> Node Manager Group -> Security -> Minimum User ID 
+可见该配置项的默认值是1000，把它改为0即可。
+
+最小用户 ID 	NodeManager (gz-sxd-dddapp4-140-12)  
+min.user.id	1000
+
+----------------------------------------------
