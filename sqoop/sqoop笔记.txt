@@ -1,4 +1,7 @@
 
+官方文档：http://sqoop.apache.org/docs/1.4.6/SqoopUserGuide.html
+
+-m,--num-mappers <n>	使用n个map任务并行导出
 --------------------
 mysql导入hdfs(hive)
 
@@ -80,7 +83,6 @@ sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --table test \
 --mapreduce-job-name ImportMySQL2HDFS \
 --delete-target-dir \
---table test \
 -m 1
 
 
@@ -93,7 +95,6 @@ sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --table test \
 --mapreduce-job-name ImportMySQL2HDFS \
 --delete-target-dir \
---table test \
 -m 1 \
 --target-dir /user/finance/input/
 
@@ -110,7 +111,6 @@ sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --table test \
 --mapreduce-job-name ImportMySQL2HDFS \
 --delete-target-dir \
---table test \
 --fields-terminated-by '\t' \
 -m 1
 
@@ -125,7 +125,6 @@ sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --table test \
 --mapreduce-job-name ImportMySQL2HDFS \
 --delete-target-dir \
---table test \
 --fields-terminated-by '\t' \
 --lines-terminated-by "\n" \
 -m 1
@@ -145,7 +144,6 @@ sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --table test \
 --mapreduce-job-name ImportMySQL2HDFS \
 --delete-target-dir \
---table test \
 --fields-terminated-by '\t' \
 -m 1 \
 --null-non-string 0
@@ -162,7 +160,6 @@ sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --table test \
 --mapreduce-job-name ImportMySQL2HDFS \
 --delete-target-dir \
---table test \
 --fields-terminated-by '\t' \
 -m 1 \
 --null-non-string 0  \
@@ -178,7 +175,6 @@ sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 --table test \
 --mapreduce-job-name ImportMySQL2HDFS \
 --delete-target-dir \
---table test \
 --fields-terminated-by '\t' \
 -m 1 \
 --null-non-string 0  \
@@ -362,7 +358,7 @@ sqoop export \
 
 插入中文乱码问题
 sqoop export 
---connect "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf-8" 
+--connect "jdbc:mysql://10.555.140.89:3306/test?useUnicode=true&characterEncoding=utf-8" 
 --username root 
 --password 123456 
 --table sal 
@@ -382,16 +378,157 @@ sqoop export \
 --export-dir /user/hive/warehouse/ai_data.db/test_hive \
 --columns list_name
 
-
+sqoop export \
+--connect jdbc:mysql://10.555.140.89:3306/chat_stat \
+--username root \
+--password datacenter \
+--table test_hdfs \
+--input-fields-terminated-by '\t' \
+--export-dir /user/hive/warehouse/ai_data.db/test_hive \
+--columns "list_name,index_value"
 
 
 根目录 类似于linux的/
 hdfs dfs -ls /
 
-# 当前用户根目录 类似于linux的~(/home/user)
+# 当前用户根目录 类似于linux的~(/home/{user.name}/)
 hdfs dfs -ls 
 
+----------
+Hive:
+
+1.全部导入
+--table student (mysql上的表) 
+--hcatalog-database sopdm(hive上的schema) 
+--hcatalog-table student(hive上的表)
+
+create table test_hive like test_hdfs;
 
 
+sqoop export \
+--connect jdbc:mysql://10.555.140.89:3306/chat_stat \
+--username root \
+--password datacenter \
+--table test_hive \
+--hcatalog-database ai_data \
+--hcatalog-table test_hive
+
+
+
+2.部分导入
+--table  student   (mysql上的表) 
+--columns "id,name,age"   (导出部分字段)
+--hcatalog-database sopdm   (hive上的schema) 
+--hcatalog-table student  (hive上的表)
+
+
+
+sqoop export \
+--connect jdbc:mysql://10.555.140.89:3306/chat_stat \
+--username root \
+--password datacenter \
+--table  test_hive \
+--columns "list_name"  \
+--hcatalog-database ai_data \
+--hcatalog-table test_hive
+
+
+sqoop export \
+--connect jdbc:mysql://10.555.140.89:3306/chat_stat \
+--username root \
+--password datacenter \
+--table  test_hive \
+--columns "index_value"  \
+--hcatalog-database ai_data \
+--hcatalog-table test_hive
+
+
+
+sqoop导出是根据分隔符去分隔字段值。hive默认的分隔符是‘\001’,sqoop默认的分隔符是','。
+
+
+从hive导出分区表到MySQL
+--hive-partition-key dt  分区字段
+--hive-partition-value '2018-08-09'  分区值
+
+
+sqoop export   \
+--connect jdbc:mysql://10.555.140.89:3306/chat_stat \
+--username root \
+--password datacenter \
+--table test_hive \
+--hive-partition-key dt \
+--hive-partition-value '2018-08-09' \
+--export-dir /user/hive/warehouse/ai_data.db/test_hive_part/dt=2018-08-09/  \
+--input-fields-terminated-by '\t'   \
+--input-lines-terminated-by '\n'
+
+
+--export-dir这个参数是必须的，指定hive表源文件路径后，sqoop回到路径下路径下的文件，
+文件不是路径否则报错。
+所以分区表需要单独指定每个分区的目录，分别导入。
+
+
+--hcatalog-partition-keys
+--hcatalog-partition-values
+多个静态key/value对
+
+如：有年月日三个静态分区
+--hcatalog-partition-keys year,month,day
+--hcatalog-partition-values 1999,12,31
+
+
+-----------------------
+
+
+hive显示列名
+set hive.cli.print.header=true;
+
+hive显示列名，不带表名
+set hive.resultset.use.unique.column.names=false;
+
+-------------------------
+sqoop job的使用
+
+把sqoop执行的语句变成一个job，
+并不是在创建语句的时候执行，
+你可以查看该job，可以任何时候执行该job，
+也可以删除job，这样就方便我们进行任务的调度。
+
+
+--create <job-id>  创建一个新的job.
+--delete <job-id>  删除job
+--exec <job-id>    执行job
+--show <job-id>    显示job的参数
+--list             列出所有的job
+
+
+# 创建job
+sqoop job --create ImportMySQL2HDFS -- import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
+--username root \
+--password datacenter \
+--table test \
+--mapreduce-job-name ImportMySQL2HDFS \
+--delete-target-dir \
+--fields-terminated-by '\t' \
+-m 1 \
+--null-non-string 0
+
+# 查看job
+sqoop job --list
+
+sqoop job --exec ImportMySQL2HDFS  (执行时，需要输入数据库密码)
+
+sqoop job --show ImportMySQL2HDFS  (执行时，需要输入数据库密码)
+
+
+执行job的时候，需要输入数据库的密码，怎么样能不输入密码呢？
+配置sqoop-site.xml
+ <property>
+     <name>sqoop.metastore.client.record.password</name>
+     <value>true</value>
+     <description>If true, allow saved passwords in the metastore.
+     </description>
+</property> 
 
 
