@@ -1,0 +1,9 @@
+-V/--version 显示版本信息
+--negotiate     使用HTTP身份验证
+-b/--cookie <name=string/file> cookie字符串或文件读取位置
+-c/--cookie-jar <file> 操作结束后把cookie写入到这个文件中
+-u/--user <user[:password]>设置服务器的用户和密码
+
+
+kinit hdfs
+curl --negotiate -u : -b ~/cookiejar.txt -c ~/cookiejar.txt http://10.250.22.21:50070/webhdfs/v1/?op=liststatus  

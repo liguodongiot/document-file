@@ -1,0 +1,39 @@
+
+
+
+https://hdfscli.readthedocs.io/en/latest/api.html#hdfs.client.Client
+
+
+kinit finance
+
+---
+
+安装依赖库
+pip install hdfs
+pip install requests_kerberos
+
+---
+
+vim ~/.hdfscli.cfg
+
+autoload.modules = hdfs.ext.kerberos
+
+
+
+---
+
+
+
+from hdfs.ext.kerberos import KerberosClient
+client = KerberosClient('http://10.22.32.12:50070')
+hdfs_path = client.list('/')
+for data in hdfs_path:
+   print data
+
+
+from hdfs.ext.kerberos import KerberosClient
+client = KerberosClient(url='http://ip:50070',root='/user/')
+hdfs_path = client.list('liguodong')
+for data in hdfs_path:
+   print data
+
