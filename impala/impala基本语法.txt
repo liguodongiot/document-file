@@ -1,6 +1,11 @@
 
 
 
+INVALIDATE METADATA;                   //重新加载所有库中的所有表
+INVALIDATE METADATA [table];           //重新加载指定的某个表
+
+
+
 create database ai_data;
 
 show databases;
@@ -28,6 +33,10 @@ load data inpath '/user/finance/data.txt' overwrite into table testtable;
 
 
 
+
+--------------
+查看分区信息
+show partitions test_hive_part;
 
 
 

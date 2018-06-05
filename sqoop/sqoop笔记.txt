@@ -532,3 +532,21 @@ sqoop job --show ImportMySQL2HDFS  (执行时，需要输入数据库密码)
 </property> 
 
 
+~~~~~~~~~~~~~~~~~~~~
+
+Hive表结构中的数据类型与MySQL对应列有如下关系：
+MySQL(bigint) --> Hive(bigint) 
+MySQL(tinyint) --> Hive(tinyint) 
+MySQL(int) --> Hive(int) 
+MySQL(double) --> Hive(double) 
+MySQL(bit) --> Hive(boolean) 
+MySQL(varchar) --> Hive(string) 
+MySQL(decimal) --> Hive(double) 
+MySQL(date/timestamp) --> Hive(string)
+
+
+导入时通过--map-column-hive 作出映射关系指定
+--map-column-hive cost="DECIMAL",date="DATE"
+从Mysql[decimal(12,2)]-->Hive[decimal]会导致导入后小数丢失。
+
+

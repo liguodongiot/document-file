@@ -1,0 +1,45 @@
+
+
+http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/WebHDFS.html
+
+http://hadoop.apache.org/docs/r1.0.4/webhdfs.html
+
+
+
+-V/--version 显示版本信息
+--negotiate     使用HTTP身份验证
+-b/--cookie <name=string/file> cookie字符串或文件读取位置
+-c/--cookie-jar <file> 操作结束后把cookie写入到这个文件中
+-u/--user <user[:password]>设置服务器的用户和密码
+
+
+kinit hdfs
+
+查看目录下的文件
+curl --negotiate -u : -b ~/cookiejar.txt -c ~/cookiejar.txt http://10.250.22.21:50070/webhdfs/v1/?op=liststatus  
+
+
+使用Kerberos SPNEGO进行安全认证
+curl -i --negotiate -u : "http://gz-public-dev-app3-140-215.ddd.host:50070/webhdfs/v1/?op=liststatus"
+
+
+创建一个目录
+curl -i -X PUT "http://gz-public-dev-app3-140-215.ddd.host:50070/webhdfs/v1/ai-nlp/test2?op=MKDIRS&permission=777"
+
+curl -i --negotiate -u : -X PUT "http://gz-public-dev-app3-140-215.ddd.host:50070/webhdfs/v1/ai-nlp/test2?op=MKDIRS&permission=777"
+
+
+重命名一个目录或文件
+curl -i --negotiate -u : -X PUT "http://gz-public-dev-app3-140-215.ddd.host:50070/webhdfs/v1/ai-nlp/test2?op=RENAME&destination=/ai-nlp/test5"
+
+
+读取hdfs文件
+curl -i -L --negotiate -u : "http://gz-public-dev-app3-140-215.ddd.host:50070/webhdfs/v1/ai-nlp/aaa.txt?op=OPEN"
+
+
+
+
+
+
+
+
