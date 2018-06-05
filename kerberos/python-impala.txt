@@ -1,0 +1,53 @@
+Python连接impala+Kerberos步骤：
+1.安装kerberos客户端
+yum install krb5-workstation krb5-libs krb5-auth-dialog
+
+2.修改/etc//etc/krb5.conf内容为下面内容
+[libdefaults]
+default_realm = DUODDS.COM
+dns_lookup_kdc = false
+dns_lookup_realm = false
+ticket_lifetime = 86400
+renew_lifetime = 604800
+forwardable = true
+default_tgs_enctypes = aes128-cts des3-hmac-sha1 arcfour-hmac des-hmac-sha1 des-cbc-md5 des-cbc-crc
+default_tkt_enctypes = aes128-cts des3-hmac-sha1 arcfour-hmac des-hmac-sha1 des-cbc-md5 des-cbc-crc
+permitted_enctypes = aes128-cts des3-hmac-sha1 arcfour-hmac des-hmac-sha1 des-cbc-md5 des-cbc-crc
+udp_preference_limit = 1
+kdc_timeout = 3000
+[realms]
+DUODDS.COM = {
+kdc = 22.30.32.215
+admin_server = 22.30.32.215
+}
+
+3.安装pyhon以及kerberos依赖包
+yum intall -y python python-devel 
+3.1使用源码安装
+yum install -y git
+git clone https://github.com/cloudera/impyla.git
+cd impyla
+pip install setuptools==3.4.4
+python setup.py install
+
+3.2使用pip安装
+pip install impyla
+
+4.安装认证依赖
+yum install -y cyrus-sasl-plain  cyrus-sasl-devel  cyrus-sasl-gssapi
+
+5.登录kerberos认证
+kinit liguodong
+密码: liguodong
+
+6.impala测试代码.
+from impala.dbapi import connect
+conn = connect(host='12.220.132.21', port=21050, auth_mechanism="GSSAPI", kerberos_service_name='impala')
+cur = conn.cursor()
+cur.execute('select name from test.testtable;')
+data_list = cur.fetchall()
+for data in data_list:
+   print data
+   
+以上代码保存为impala.py 
+运行 python impala.py

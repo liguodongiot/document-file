@@ -1,0 +1,72 @@
+﻿
+
+
+https://hdfscli.readthedocs.io/en/latest/api.html#hdfs.client.Client
+
+
+
+
+kerberos客户端安装
+
+1，	安装krb5
+yum -y install krb5-libs  yum -y install krb5-workstation krb5-devel
+
+2, 修改 配置 vim /etc/krb5.conf ，将里面的内容全部替换成如下内容：
+[libdefaults]
+default_realm = GUODONG.COM
+dns_lookup_kdc = false
+dns_lookup_realm = false
+ticket_lifetime = 86400
+renew_lifetime = 604800
+forwardable = true
+default_tgs_enctypes = aes128-cts des3-hmac-sha1 arcfour-hmac des-hmac-sha1 des-cbc-md5 des-cbc-crc
+default_tkt_enctypes = aes128-cts des3-hmac-sha1 arcfour-hmac des-hmac-sha1 des-cbc-md5 des-cbc-crc
+permitted_enctypes = aes128-cts des3-hmac-sha1 arcfour-hmac des-hmac-sha1 des-cbc-md5 des-cbc-crc
+udp_preference_limit = 1
+kdc_timeout = 3000
+
+[realms]
+GUODONG.COM = {
+ kdc = 14.230.140.22
+ admin_server = 14.230.140.22
+}
+
+
+登录
+kinit liguodong
+
+---
+
+安装依赖库
+pip install hdfs
+pip install requests_kerberos
+
+---
+
+vim ~/.hdfscli.cfg
+
+autoload.modules = hdfs.ext.kerberos
+
+
+
+---
+
+
+
+from hdfs.ext.kerberos import KerberosClient
+client = KerberosClient('http://10.22.32.12:50070')
+hdfs_path = client.list('/')
+for data in hdfs_path:
+   print data
+
+
+from hdfs.ext.kerberos import KerberosClient
+client = KerberosClient(url='http://hostname:50070',root='/user/')
+hdfs_path = client.list('liguodong')
+for data in hdfs_path:
+   print data
+
+
+多个URL用分号分隔，以配置高可用。
+
+

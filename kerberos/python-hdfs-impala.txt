@@ -1,0 +1,52 @@
+
+Python操作Impala
+# 安装依赖库
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple thrift_sasl==0.2.1
+pip install impyla
+
+
+from impala.dbapi import *
+# 获取impala连接
+conn = connect(host='guodong.host.app', port=21050,user=None,password=None,auth_mechanism='GSSAPI')
+cur = conn.cursor()
+# 执行SQL
+cur.execute('select question from test.order_detail order by id limit 2 offset 4;')
+data_list = cur.fetchall()
+print(data_list)
+
+
+注意：
+提前做好测试，数据量一次不能拉取太大，否则会被监控kill。
+内存不要超过100G，数据量控制到300G以内，尽量减少中间表，多步实施。
+
+
+-----------------------------------
+Python操作HDFS
+
+# 安装依赖库
+pip install hdfs
+pip install requests_kerberos
+
+
+from hdfs.ext.kerberos import KerberosClient
+
+# 多个namenode用分号(;)分隔
+client = KerberosClient(url='http://guodong.host.app:50070',root='/user/guodong.li/')
+
+# 创建目录
+client.makedirs('/user/guodong.li/test', permission='777')
+
+# 检查目录或文件是否存在
+client.status('/user/guodong.li/test', strict=True)
+
+# 上传文件
+client.upload('/user/guodong.li/test', '/root/aaa.txt', overwrite=True)
+
+# 下载文件
+client.download('/user/guodong.li/test/aaa.txt', '/root/bbb.txt', overwrite=True)
+
+# 检查目录或文件是否存在
+client.status('/user/guodong.li/test/aaa.txt', strict=True)
+
+# 如果为false,目录返回None,而不是抛出异常
+client.status('/user/guodong.li/test/aaa.txt', strict=False)
