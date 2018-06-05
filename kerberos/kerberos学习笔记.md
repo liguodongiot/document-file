@@ -52,7 +52,7 @@ kinit成功之后你获取的票据就会缓存到本地，可以用klist查看.
 # 修改密码
 
 kpasswd
-kpasswd finance
+kpasswd liguodong
 
 # 更新credentials
 kinit -R
