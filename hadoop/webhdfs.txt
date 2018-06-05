@@ -1,3 +1,11 @@
+
+
+http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/WebHDFS.html
+
+http://hadoop.apache.org/docs/r1.0.4/webhdfs.html
+
+
+
 -V/--version 显示版本信息
 --negotiate     使用HTTP身份验证
 -b/--cookie <name=string/file> cookie字符串或文件读取位置
