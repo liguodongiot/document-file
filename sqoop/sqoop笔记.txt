@@ -103,6 +103,14 @@ sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
 
 指定字段之间的分隔符 
 参数: --fields-terminated-by
+如果不加其他参数，导入的数据默认的列分隔符是'\001'，默认的行分隔符是'\n'。
+
+这样问题就来了，如果导入的数据中有'\n'，hive会认为一行已经结束，后面的数据被分割成下一行。
+这种情况下，导入之后hive中数据的行数就比原先数据库中的多，而且会出现数据不一致的情况。
+Sqoop也指定了参数 --fields-terminated-by和 --lines-terminated-by来自定义行分隔符和列分隔符。
+虽然你通过--lines-terminated-by指定了其他的字符作为行分隔符，但是hive只支持'\n'作为行分隔符。
+简单的解决办法就是加上参数--hive-drop-import-delims来把导入数据中包含的hive默认的分隔符去掉。
+
 
 
 sqoop import  --connect jdbc:mysql://10.555.140.89:3306/chat_stat \
