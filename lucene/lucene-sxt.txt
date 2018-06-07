@@ -18,4 +18,54 @@ lucene提供的服务实际包含两部分：一入一出。
 
 
 
+public static final String indexDir="G:/index";
+    public static final String dataDir="G:/www.bjsxt.com";
+    @Test
+    public void createIndex(){
+        try {
+            Directory dir = FSDirectory.open(new File(indexDir));
+            Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_4_9);
+            IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_4_9,analyzer);
+            config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+            IndexWriter writer = new IndexWriter(dir,config);
+            File file = new File(dataDir);
+            Collection<File> files = FileUtils.listFilesAndDirs(file, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+            for(File f:files){
+                HtmlBean htmlBean = HtmlBeanUtil.parseHtml(f);
+                Document doc = new Document();
+                doc.add(new StringField("title", htmlBean.getTitle(), Field.Store.YES));
+                doc.add(new StringField("content", htmlBean.getContent(), Field.Store.YES));
+                doc.add(new StringField("url", htmlBean.getUrl(), Field.Store.YES));
+                writer.addDocument(doc);
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+	
+	
+@Test
+    public void search(){
+        try {
+            Directory dir = FSDirectory.open(new File(CreateIndex.indexDir));
+            IndexReader reader = DirectoryReader.open(dir);
+            IndexSearcher searcher = new IndexSearcher(reader);
+            StandardAnalyzer standardAnalyzer = new StandardAnalyzer(Version.LUCENE_4_9);
+            QueryParser qp = new QueryParser(Version.LUCENE_4_9,"content",standardAnalyzer);
+            Query query = qp.parse("java");
+            TopDocs search = searcher.search(query, 10);
+            ScoreDoc[] scoreDocs = search.scoreDocs;
+            for(ScoreDoc sc:scoreDocs){
+                int docId = sc.doc;
+                Document document = reader.document(docId);
+                System.out.println(document.get("filename"));;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }	
+	
+	
