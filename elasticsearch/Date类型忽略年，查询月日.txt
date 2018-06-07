@@ -1,0 +1,124 @@
+
+PUT /book
+{
+   "mappings": {
+    "default":{
+       "properties":{
+            "title": {
+				"analyzer" : "ik_max_word",
+				"search_analyzer" : "ik_smart",
+				"type": "text"
+            },
+			"create_time": {
+				"type":   "date",
+				"format": "yyyy-MM-dd HH:mm:ss"
+			}
+        }
+    }
+  }
+}
+
+
+
+
+
+POST /book/default/1
+{
+  "create_time": "2018-01-01 11:11:11",
+  "title":"沉溺于的偏方，哪怕回报是虚拟的"
+}
+
+POST /book/default/2
+{
+  "create_time": "2018-01-01 11:11:11",
+  "title":"沉溺于「轻易获得高成就感」的事情回报是虚拟的"
+}
+
+
+POST /book/default/3
+{
+  "create_time": "2018-01-01 11:11:11",
+  "title":"沉溺于「轻易获得高成就感」的事情：有意无意地寻求用很小付出"
+}
+
+
+POST /book/default/4
+{
+  "create_time": "2018-01-01 11:11:11",
+  "title":"很大「回报」的偏方，哪怕回报是虚拟的"
+}
+
+
+
+POST /book/default/5
+{
+  "create_time": "2018-03-03 11:11:11",
+  "title":"很大的偏方，哪怕回报是虚拟的"
+}
+
+
+POST /book/_search
+{
+	"size": 100,
+	"_source": {
+		"includes": [
+			"title",
+			"create_time"
+		]
+	},
+	"query": {
+		"bool": {
+			"must": [{
+					"script": {
+						"script": {
+							"inline": "doc['create_time'].getDate().getMonthOfYear() == 01",
+							"lang": "painless"
+						}
+					}
+				},
+				{
+					"script": {
+						"script": {
+							"inline": "doc['create_time'].getDate().getDayOfMonth() == 01",
+							"lang": "painless"
+						}
+					}
+				}
+			]
+		}
+	}
+}
+
+
+
+
+POST /book/_search
+{
+	"size": 100,
+	"_source": {
+		"includes": [
+			"title",
+			"create_time"
+		]
+	},
+	"query": {
+		"bool": {
+			"must": {
+				"script": {
+					"script": {
+						"inline": "doc['create_time'].getDate().getMonthOfYear() == 03 &&  doc['create_time'].getDate().getDayOfMonth () == 03",
+						"lang": "painless"
+					}
+				}
+			}
+			
+		}
+	}
+}
+
+
+
+
+
+
+
