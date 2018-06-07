@@ -43,6 +43,30 @@ du -lh --max-depth=1
 
 
 
+### su
+
+```shell
+su 是切换到其他用户，但是不切换环境变量
+su - 是完整的切换到一个用户环境
+
+1.su的作用是变更为其它使用者的身份，需要键入该使用者的密码（超级用户除外）。
+
+2.格式
+su [选项]... [-] [USER [ARG]...]
+
+3.主要参数
+-f， --fast：不必读启动文件（如 csh.cshrc 等），仅用于csh或tcsh两种Shell。
+-l， --login：加了这个参数之后，就似乎是重新登陆为该使用者一样，大部分环境变量（例如HOME、SHELL和USER等）都是以该使用者（USER）为主，并且工作目录也会改变。假如没有指定USER，缺省情况是root。
+-m， -p ，--preserve-environment：执行su时不改变环境变数。
+-c command：变更账号为USER的使用者，并执行指令（command）后再变回原来使用者。
+USER：欲变更的使用者账号，ARG传入新的Shell参数。
+
+```
+
+
+
+
+
 
 
 ### FTP

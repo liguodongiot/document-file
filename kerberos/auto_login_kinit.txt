@@ -1,0 +1,20 @@
+
+vim auto_login_kinit.sh
+
+#!/bin/bash
+
+su - liguodong -c "/usr/bin/kinit liguodong <<KDCPASSWORD
+liguodong
+KDCPASSWORD"
+
+
+chmod 777 auto_login_kinit.sh
+
+./auto_login_kinit.sh
+
+
+在crontab 里面添加kinit执行命令
+*/15 * * * * /bin/sh /usr/local/sbin/auto_login_kinit.sh
+
+
+
