@@ -1,0 +1,86 @@
+内置SQL
+
+
+
+
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.3.0.zip
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.3.0.zip.sha512
+
+# 安装shasum
+yum install perl-Digest-SHA -y
+# 查看文件hash值 ，查看文件是否完整
+shasum -a 512 -c elasticsearch-6.3.0.zip.sha512 
+
+unzip elasticsearch-6.3.0.zip
+cd elasticsearch-6.3.0/
+./bin/elasticsearch
+
+
+http://10.250.140.14:9987
+
+
+
+curl -X PUT "http://10.250.140.14:9987/library/book/_bulk?refresh" -H 'Content-Type: application/json' -d '
+{"index":{"_id": "Leviathan Wakes"}}
+{"name": "Leviathan Wakes", "author": "James S.A. Corey", "release_date": "2011-06-02", "page_count": 561}
+{"index":{"_id": "Hyperion"}}
+{"name": "Hyperion", "author": "Dan Simmons", "release_date": "1989-05-26", "page_count": 482}
+{"index":{"_id": "Dune"}}
+{"name": "Dune", "author": "Frank Herbert", "release_date": "1965-06-01", "page_count": 604}
+'
+
+curl http://10.250.140.14:9987/library?pretty
+
+
+
+curl http://10.250.140.14:9987/library/_search?pretty
+
+
+
+curl -X POST "http://10.250.140.14:9987/_xpack/sql?format=txt" -H 'Content-Type: application/json' -d '{
+    "query": "SELECT * FROM library ORDER BY page_count DESC LIMIT 5"
+}'
+
+
+curl -X POST "http://10.250.140.14:9987/_xpack/sql?format=txt" -H 'Content-Type: application/json' -d '{
+    "query": "SELECT name,author FROM library ORDER BY page_count DESC LIMIT 5"
+}'
+
+
+# 其他的格式支持包括：yaml、smile、cbor 、txt、csv、tsv等等，我们可以通过 format 参数指定。
+
+# 默认为json格式
+curl -X POST "http://10.250.140.14:9987/_xpack/sql?format=json" -H 'Content-Type: application/json' -d'
+{
+    "query": "SELECT * FROM library ORDER BY page_count DESC LIMIT 5"
+}
+'
+
+curl -X POST "http://10.250.140.14:9987/_xpack/sql?format=csv" -H 'Content-Type: application/json' -d'
+{
+    "query": "SELECT * FROM library ORDER BY page_count DESC LIMIT 5"
+}
+'
+
+
+# 翻译SQL为DSL
+
+curl -X POST "http://10.250.140.14:9987/_xpack/sql/translate?pretty" -H 'Content-Type: application/json' -d'
+{
+    "query": "SELECT * FROM library ORDER BY page_count DESC",
+    "fetch_size": 10
+}
+'
+
+
+# ES自带SQL命令行
+./bin/elasticsearch-sql-cli http://10.250.140.14:9987
+
+SELECT * FROM library ORDER BY page_count DESC;
+
+
+
+
+
+
+
