@@ -3,3 +3,11 @@
 
 死磕 Elasticsearch 方法论：普通程序员高效精进的 10 大狠招！
 https://mp.weixin.qq.com/s?__biz=MzA4Mzc0NjkwNA==&mid=2650784699&idx=1&sn=63226d53ce7fac4e5fc195de49711f9e&scene=21#wechat_redirect
+
+
+
+ES当前版本发布的文档
+https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-jdbc.html
+
+ES未来发布版本的初步文档
+https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-jdbc.html

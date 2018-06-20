@@ -1,0 +1,8 @@
+
+
+# 安装x-pack
+bin/elasticsearch-plugin install x-pack
+
+# 移除x-pack
+bin/elasticsearch-plugin remove x-pack
+

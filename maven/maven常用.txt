@@ -1,0 +1,14 @@
+
+远程仓库：
+
+Spring：
+http://repo.spring.io/plugins-release/
+
+ES：
+https://artifacts.elastic.co/maven
+
+Redhat：
+https://maven.repository.redhat.com/ga/
+
+阿里云:
+http://maven.aliyun.com/nexus/content/groups/public/

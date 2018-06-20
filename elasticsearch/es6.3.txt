@@ -84,3 +84,88 @@ SELECT * FROM library ORDER BY page_count DESC;
 
 
 
+# ES JDBC
+mvn install:install-file -Dfile=D:\elasticsearch-jdbc-with-dependencies-6.3.0\jdbc-6.3.0.jar -DgroupId=org.elasticsearch.plugin.jdbc -DartifactId=jdbc -Dversion=6.3.0 -Dpackaging=jar -DgeneratePom=true -DcreateChecksum=true
+
+
+# 6.3 es已经默认安装了x-pack
+curl -XGET 'http://10.250.140.14:9987/_license'
+curl -XGET -u elastic:changeme 'http://10.250.140.14:9987/_license'
+
+{
+  "license" : {
+    "status" : "active",
+    "uid" : "a83f7a5c-693e-4ea7-b5ab-74bf9b6426e3",
+    "type" : "basic",
+    "issue_date" : "2018-06-15T08:56:34.200Z",
+    "issue_date_in_millis" : 1529052994200,
+    "max_nodes" : 1000,
+    "issued_to" : "lgd",
+    "issuer" : "elasticsearch",
+    "start_date_in_millis" : -1
+  }
+}
+
+
+
+
+# 更新license
+curl -XPUT -u elastic:changeme 'http://10.250.140.14:9200/_xpack/license?acknowledge=true' -d @li-guodong-4f01c21a-42c4-47c3-be2b-08cab8f8df55-v5.json
+curl -XPUT 'http://10.250.140.14:9200/_xpack/license?acknowledge=true' -H "Content-Type: application/json" -d @li-guodong-4f01c21a-42c4-47c3-be2b-08cab8f8df55-v5.json
+curl -XPUT -u elastic 'http://192.168.20.101:9200/_xpack/license' -H "Content-Type: application/json" -d @license.json
+curl -XPUT -u elastic 'http://192.168.20.60:9200/_xpack/license?acknowledge=true' -H "Content-Type: application/json" -d @license.json
+
+
+{"acknowledged":true,"license_status":"valid"}
+
+
+
+# 破解x-pack 参考
+# https://blog.csdn.net/wfs1994/article/details/80421922
+# https://www.cnblogs.com/reboot51/p/8328720.html
+
+
+
+JDBC requires a Platinum (or trial) license. 
+https://www.elastic.co/subscriptions
+
+申请license：https://license.elastic.co/registration
+
+
+
+
+/home/lgd/install/elasticsearch-6.3.0/modules/x-pack/x-pack-core
+
+jar xvf x-pack-core-6.3.0.jar
+
+# 替换jar包中的文件
+jar uf x-pack-core-6.3.0.jar org/elasticsearch/xpack/core/XPackBuild.class 
+jar uf x-pack-core-6.3.0.jar org/elasticsearch/license/LicenseVerifier.class 
+
+# 除非配置了TLS或禁用安全性，否则无法安装[白金]许可证。
+curl -XPUT 'http://10.250.140.14:9987/_xpack/license?acknowledge=true' -H "Content-Type: application/json" -d @li-guodong-4f01c21a-42c4-47c3-be2b-08cab8f8df55-v5.json
+
+{
+	"error": {
+		"root_cause": [{
+			"type": "illegal_state_exception",
+			"reason": "Cannot install a [PLATINUM] license unless TLS is configured or security is disabled"
+		}],
+		"type": "illegal_state_exception",
+		"reason": "Cannot install a [PLATINUM] license unless TLS is configured or security is disabled"
+	},
+	"status": 500
+}
+
+elasticsearch.yml
+xpack.security.enabled: false
+
+
+
+
+
+
+
+
+
+
