@@ -1,4 +1,4 @@
-
+﻿
 
 # 安装x-pack
 bin/elasticsearch-plugin install x-pack
@@ -6,3 +6,11 @@ bin/elasticsearch-plugin install x-pack
 # 移除x-pack
 bin/elasticsearch-plugin remove x-pack
 
+
+
+# 汉语言处理分词：
+https://github.com/hankcs/HanLP
+
+
+# 基于ES的hanlp分词插件
+https://github.com/pengcong90/elasticsearch-analysis-hanlp

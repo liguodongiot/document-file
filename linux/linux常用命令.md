@@ -1,4 +1,6 @@
 
+[toc]
+
 
 ### 用户及权限
 
@@ -97,5 +99,59 @@ mput xma_v1.1.1_201805311116.zip
 
 ```
 
+
+
+### 系统版本
+
+```
+# 内核版本
+uname -a 
+
+# 操作系统版本
+cat /etc/os-release
+
+cat /etc/redhat-release
+```
+
+
+### 查找文件
+
+```
+find /home/neo4j/ -name hazelcast.xml
+```
+
+
+### 防火墙 
+
+```
+//临时关闭
+systemctl stop firewalld
+
+
+```
+
+
+
+### SELinux
+
+```
+# 查看状态
+getenforce
+
+/usr/sbin/sestatus -v
+SELinux status:                 disabled
+
+# 临时关闭
+# 设置SELinux 成为permissive模式
+# setenforce 1 设置SELinux 成为enforcing模式
+setenforce 0
+
+
+# 永久关闭
+vi /etc/selinux/config
+将SELINUX=enforcing改为SELINUX=disabled 
+设置后需要重启才能生效
+
+```
 
 
