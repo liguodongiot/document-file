@@ -6,3 +6,269 @@
 关系
 属性
 
+
+### Neo4j CQL
+
+CQL代表Cypher查询语言。 Neo4j具有CQL作为查询语言。
+
+
+它是Neo4j图形数据库的查询语言。
+
+它是一种声明性模式匹配语言
+
+它遵循SQL语法。
+
+它的语法是非常简单且人性化、可读的格式。
+
+Neo4j CQL支持以下数据类型：
+
+S.No.	CQL数据类型		用法
+1.		boolean			用于表示布尔文字：true，false。
+2.		byte			用于表示8位整数。
+3.		short			用于表示16位整数。
+4.		int				用于表示32位整数。
+5.		long			用于表示64位整数。
+6.		float			I用于表示32位浮点数。
+7.		double			用于表示64位浮点数。
+8.		char			用于表示16位字符。
+9.		String			用于表示字符串。
+
+### CREATE命令
+
+## 创建一个没有属性的节点
+
+# 这里emp是一个节点名，Employee是emp节点的标签名称
+CREATE (emp:Employee)
+
+# 这里dept是一个节点名，Dept是dept节点的标签名称
+CREATE (dept:Dept)
+
+
+## 创建具有一些属性（deptno，dname，位置）的Dept节点。
+
+CREATE (dept:Dept { deptno:10,dname:"Accounting",location:"Hyderabad" })
+
+
+这里的属性名称是deptno，dname，location
+
+属性值为10，"Accounting","Hyderabad"
+
+属性：一个名称 - 值对。
+Property = deptno:10
+
+因为deptno是一个整数属性，所以我们没有使用单引号或双引号定义其值10。
+
+由于dname和location是String类型属性，因此我们使用单引号或双引号定义其值10。
+
+注意： 要定义字符串类型属性值，我们需要使用单引号或双引号。
+
+
+
+
+## 创建具有一些属性（id，name，sal，deptno）的Employee节点。
+
+CREATE (emp:Employee{id:123,name:"Lokesh",sal:35000,deptno:10})
+
+
+
+### MATCH和RETURN命令
+
+从数据库获取有关节点和属性的数据
+从数据库获取有关节点，关系和属性的数据
+
+
+# 单独使用MATCH命令从数据库检索数据
+MATCH (dept:Dept)
+
+
+# 单独使用RETURN命令从数据库检索数据
+RETURN dept.deptno
+
+
+
+不能单独使用MATCH或RETURN命令，我们应该合并这两个命令以从数据库检索数据。
+
+
+检索节点的某些属性
+检索节点的所有属性
+检索节点和关联关系的某些属性
+检索节点和关联关系的所有属性
+
+
+MATCH (dept: Dept)
+RETURN dept.deptno,dept.dname
+
+
+MATCH (dept: Dept)
+RETURN dept.deptno,dept.dname,dept.location
+
+# 从数据库检索Dept节点的数据，而无需指定其属性。
+
+MATCH (dept: Dept)
+RETURN dept
+
+
+### 节点关系
+使用属性和这两个节点之间的关系创建两个节点。
+
+注-我们将创建两个节点：
+客户节点包含：ID，姓名，出生日期属性
+CreditCard节点包含：id，number，cvv，expiredate属性
+客户与信用卡关系：DO_SHOPPING_WITH
+CreditCard到客户关系：ASSOCIATED_WITH
+
+
+步骤：
+创建客户节点
+CREATE (e:Customer{id:"1001",name:"Abc",dob:"01/10/1982"})
+
+创建CreditCard节点
+CREATE (cc:CreditCard{id:"5001",number:"1234567890",cvv:"888",expiredate:"20/17"})
+
+观察先前创建的两个节点：Customer和CreditCard
+
+MATCH (cc:CreditCard)
+RETURN cc.id,cc.number,cc.cvv,cc.expiredate
+
+MATCH (e:Customer)
+RETURN e.id,e.name,e.dob
+
+
+创建客户和CreditCard节点之间的关系
+查看新创建的关系详细信息
+
+
+详细查看每个节点和关系属性
+
+
+
+# 关系
+Neo4j图数据库遵循属性图模型来存储和管理其数据。
+
+根据属性图模型，关系应该是定向的。 否则，Neo4j将抛出一个错误消息。
+
+基于方向性，Neo4j关系被分为两种主要类型。
+单向关系
+双向关系
+
+在以下场景中，我们可以使用Neo4j CQL CREATE命令来创建两个节点之间的关系。 
+这些情况适用于Uni和双向关系。
+
+在两个现有节点之间创建无属性的关系
+
+在两个现有节点之间创建与属性的关系
+
+在两个新节点之间创建无属性的关系
+
+在两个新节点之间创建与属性的关系
+
+在具有WHERE子句的两个退出节点之间创建/不使用属性的关系
+
+
+
+
+由于Neo4j CQL语法是以人类可读的格式。 Neo4j CQL也使用类似的箭头标记来创建两个节点之间的关系。
+
+每个关系（→）包含两个节点
+从节点
+到节点
+
+从上图中，Customer节点是“From Node”，CreditCard Node是“To Node”这种关系。
+
+对于节点，它们是两种关系
+外向关系
+传入关系
+
+从上图中，关系是到客户节点的“外向关系”，并且相同的关系是到信用卡节点的“到达关系”。
+
+
+
+
+### CREATE创建标签
+
+使用Neo4j CQL CREATE命令
+
+为节点创建单个标签
+
+为节点创建多个标签
+
+为关系创建单个标签
+
+
+# 为“GooglePlusProfile”节点创建单个标签
+CREATE (google1:GooglePlusProfile)
+
+这里google1是一个节点名
+GooglePlusProfile是google1node的标签名称
+
+# 为“Cinema”节点创建多个标签名称。
+CREATE (m:Movie:Cinema:Film:Picture)
+
+这里m是一个节点名
+Movie, Cinema, Film, Picture是m节点的多个标签名称
+
+
+
+
+
+# 单个标签到关系
+
+CREATE (p1:Profile1)-[r1:LIKES]->(p2:Profile2)
+
+这里p1和profile1是节点名称和节点标签名称“From Node”
+
+p2和Profile2是“To Node”的节点名称和节点标签名称
+
+r1是关系名称
+
+LIKES是一个关系标签名称
+
+
+### WHERE子句
+
+MATCH (emp:Employee) 
+WHERE emp.name = 'Lokesh'
+RETURN emp
+
+
+
+MATCH (emp:Employee) 
+WHERE emp.name = 'Lokesh' OR emp.name = 'Xyz'
+RETURN emp
+
+# 使用WHERE子句创建两个现有节点之间的关系。
+
+
+创建客户节点
+CREATE (e:Customer{id:"1001",name:"Abc",dob:"01/10/1982"})
+
+创建CreditCard节点
+CREATE (cc:CreditCard{id:"5001",number:"1234567890",cvv:"888",expiredate:"20/17"})
+
+MATCH (cust:Customer)
+RETURN cust.id,cust.name,cust.dob
+
+MATCH (cc:CreditCard)
+RETURN cc.id,cc.number,cc.expiredate,cc.cvv
+
+
+MATCH (cust:Customer),(cc:CreditCard) 
+WHERE cust.id = "1001" AND cc.id= "5001" 
+CREATE (cust)-[r:DO_SHOPPING_WITH{shopdate:"12/12/2014",price:55000}]->(cc) 
+RETURN r
+
+
+### DELETE删除
+
+“DELETE e”命令删除Employee节点
+MATCH (cust:Customer) DELETE cust
+
+
+
+DELETE节点和关系子句语法
+MATCH (cc: CreditCard)-[rel]-(c:Customer) 
+DELETE cc,c,rel
+
+
+
+
